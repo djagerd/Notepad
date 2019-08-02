@@ -37,35 +37,53 @@ public class Main extends Application {
 
 
         save.setOnAction(event -> {
+            BufferedWriter bw=null;
             try {
-                BufferedWriter bw = new BufferedWriter(new FileWriter("test.txt"));
+               bw = new BufferedWriter(new FileWriter("test.txt"));
 
 
                 String line;
                 line=text.getText();
                 bw.write(line);
-                bw.close();
+
 
                 
 
         } catch (IOException e) {
                 e.printStackTrace();
             }
+         finally {
+                try {
+                    if(bw != null) bw.close();
+                }
+                catch (IOException e){
+                    System.out.println(e);
+                }
+            }
+
             });
 
         open.setOnAction(event -> {
-
+            BufferedReader  bf  = null;
             try {
                 text.setText(null);
-                BufferedReader  bf  =  new BufferedReader(new FileReader("test.txt"));
+                  bf  =  new BufferedReader(new FileReader("test.txt"));
                 String line;
                 while((line = bf.readLine()) != null) {
                     text.appendText(line+"\n");
 
                 }
-            bf.close();
+
             } catch (Exception e) {
                 System.out.println(e);
+            }
+            finally {
+                try {
+                    if(bf != null) bf.close();
+                }
+                catch (IOException e){
+                    System.out.println(e);
+                }
             }
 
 
