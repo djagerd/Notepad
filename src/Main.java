@@ -7,11 +7,13 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 
+import javax.xml.bind.SchemaOutputResolver;
 import java.io.*;
-
+import java.util.Arrays;
 
 
 public class Main extends Application {
@@ -26,6 +28,7 @@ public class Main extends Application {
         MenuItem empty = new MenuItem("New");
         MenuItem open = new MenuItem("Open");
         MenuItem save = new MenuItem("Save");
+        FileChooser ch=new FileChooser();
 
         menu.getItems().add(empty);
         menu.getItems().add(open);
@@ -37,42 +40,44 @@ public class Main extends Application {
 
 
         save.setOnAction(event -> {
-            BufferedWriter bw=null;
+
+            PrintWriter pw=null;
             try {
-               bw = new BufferedWriter(new FileWriter("test.txt"));
+              pw=new PrintWriter( new BufferedWriter(new FileWriter("test.txt")));
 
 
                 String line;
                 line=text.getText();
-                bw.write(line);
+                line=line.replaceAll("\n", "\r\n");
+                pw.println(line);
+
+                System.out.println(line);
 
 
-                
+
+
 
         } catch (IOException e) {
                 e.printStackTrace();
             }
          finally {
-                try {
-                    if(bw != null) bw.close();
-                }
-                catch (IOException e){
-                    System.out.println(e);
-                }
+                if(pw!= null) pw.close();
             }
 
             });
 
         open.setOnAction(event -> {
+
             BufferedReader  bf  = null;
             try {
                 text.setText(null);
                   bf  =  new BufferedReader(new FileReader("test.txt"));
                 String line;
+
                 while((line = bf.readLine()) != null) {
                     text.appendText(line+"\n");
-
                 }
+
 
             } catch (Exception e) {
                 System.out.println(e);
