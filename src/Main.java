@@ -13,6 +13,7 @@ import javafx.stage.Stage;
 import java.io.*;
 
 
+
 public class Main extends Application {
     public static void main(String[] args) {
         Application.launch(args);
@@ -28,9 +29,7 @@ public class Main extends Application {
         MenuItem save = new MenuItem("Save");
         FileChooser fileChooser=new FileChooser();
 
-        TabPane tabpane = new TabPane();
         AnchorPane anchor=new AnchorPane();
-
 
 
 
@@ -46,7 +45,7 @@ public class Main extends Application {
 
         save.setOnAction(event -> {
 
-            PrintWriter pw=null;
+        PrintWriter pw=null;
             try {
               pw=new PrintWriter( new BufferedWriter(new FileWriter(fileChooser.showSaveDialog(null))));
 
@@ -56,7 +55,6 @@ public class Main extends Application {
                 line=line.replaceAll("\n", "\r\n");
                 pw.println(line);
 
-                System.out.println(line);
 
 
         } catch (IOException e) {
@@ -73,10 +71,10 @@ public class Main extends Application {
 
             BufferedReader  bf  = null;
             try {
-                text.setText(null);
+
                   bf  =  new BufferedReader(new FileReader(fileChooser.showOpenDialog(null)));
                 String line;
-
+                text.setText(null);
                 while((line = bf.readLine()) != null) {
                     text.appendText(line+"\n");
                 }
@@ -102,10 +100,12 @@ public class Main extends Application {
             text.setText(null);
         });
 
+
+        anchor.getChildren().addAll(text);
         VBox.setVgrow(text, Priority.ALWAYS);
         root.getChildren().addAll(menubar,text);
         stage.setScene(scene);
-        stage.setTitle("Java test");
+        stage.setTitle("Notepad");
         stage.show();
     }
 
