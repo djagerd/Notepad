@@ -1,19 +1,16 @@
 import javafx.application.Application;
 import javafx.scene.Scene;
 
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 
-import javax.xml.bind.SchemaOutputResolver;
+
 import java.io.*;
-import java.util.Arrays;
 
 
 public class Main extends Application {
@@ -23,18 +20,26 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+
         VBox root=new VBox();
         Menu menu=new Menu("File");
         MenuItem empty = new MenuItem("New");
         MenuItem open = new MenuItem("Open");
         MenuItem save = new MenuItem("Save");
-        FileChooser ch=new FileChooser();
+        FileChooser fileChooser=new FileChooser();
+
+        TabPane tabpane = new TabPane();
+        AnchorPane anchor=new AnchorPane();
+
+
+
 
         menu.getItems().add(empty);
         menu.getItems().add(open);
         menu.getItems().add(save);
         MenuBar menubar=new MenuBar();
         menubar.getMenus().add(menu);
+
         TextArea text=new TextArea();
         Scene scene=new Scene(root,450,350);
 
@@ -43,7 +48,7 @@ public class Main extends Application {
 
             PrintWriter pw=null;
             try {
-              pw=new PrintWriter( new BufferedWriter(new FileWriter("test.txt")));
+              pw=new PrintWriter( new BufferedWriter(new FileWriter(fileChooser.showSaveDialog(null))));
 
 
                 String line;
@@ -52,9 +57,6 @@ public class Main extends Application {
                 pw.println(line);
 
                 System.out.println(line);
-
-
-
 
 
         } catch (IOException e) {
@@ -68,10 +70,11 @@ public class Main extends Application {
 
         open.setOnAction(event -> {
 
+
             BufferedReader  bf  = null;
             try {
                 text.setText(null);
-                  bf  =  new BufferedReader(new FileReader("test.txt"));
+                  bf  =  new BufferedReader(new FileReader(fileChooser.showOpenDialog(null)));
                 String line;
 
                 while((line = bf.readLine()) != null) {
@@ -95,13 +98,12 @@ public class Main extends Application {
         });
 
         empty.setOnAction(event -> {
+
             text.setText(null);
         });
 
-
-
-        root.getChildren().addAll(menubar,text);
         VBox.setVgrow(text, Priority.ALWAYS);
+        root.getChildren().addAll(menubar,text);
         stage.setScene(scene);
         stage.setTitle("Java test");
         stage.show();
