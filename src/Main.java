@@ -1,4 +1,5 @@
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Scene;
 
 import javafx.scene.control.*;
@@ -67,19 +68,19 @@ public class Main extends Application {
         open.setOnAction(event -> {
 
             File file=new File(String.valueOf(fileChooser.showOpenDialog(null)));
-            text.setText("Loading"+"\r\n");
+            text.setText("Loading ..."+"\r\n");
             Thread t1 = new Thread(new Runnable() {
 
                 @Override
                 public void run() {
                     BufferedReader bf = null;
+                    boolean off = true;
                     try {
                         bf = new BufferedReader(new FileReader(file));
 
-                        text.setText(null);
                         String line=null;
                         StringBuilder buffer = new StringBuilder();
-                        while ((line=bf.readLine()) != null) {
+                        while ((line=bf.readLine()) != null ) {
                             buffer.append(line+"\n");
                         }
                         text.setText(buffer.toString());
@@ -88,7 +89,10 @@ public class Main extends Application {
                         System.out.println(e);
                     } finally {
                         try {
-                            if (bf != null) bf.close();
+                            if (bf != null){
+                                bf.close();
+
+                            }
                         } catch (IOException e) {
                             System.out.println(e);
                         }
@@ -104,7 +108,11 @@ public class Main extends Application {
 
 
         });
+        stage.setOnCloseRequest(e -> {
+            Platform.exit();
+            System.exit(0);
 
+        });
 
 
             about.setOnAction(event -> {
