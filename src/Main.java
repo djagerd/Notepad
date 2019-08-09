@@ -14,6 +14,7 @@ import javafx.stage.Stage;
 import java.io.*;
 
 public class Main extends Application {
+    public String lox=null;
     public static void main(String[] args) {
         Application.launch(args);
     }
@@ -21,12 +22,12 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) throws Exception {
 
-
         VBox root = new VBox();
         Menu menu = new Menu("File");
         MenuItem empty = new MenuItem("New");
         MenuItem open = new MenuItem("Open");
-        MenuItem save = new MenuItem("Save As");
+        MenuItem save = new MenuItem("Save");
+        MenuItem saveAs = new MenuItem("Save As");
         MenuItem about = new MenuItem("About");
         FileChooser fileChooser = new FileChooser();
 
@@ -36,6 +37,7 @@ public class Main extends Application {
         menu.getItems().add(empty);
         menu.getItems().add(open);
         menu.getItems().add(save);
+        menu.getItems().add(saveAs);
         menu.getItems().add(about);
         MenuBar menubar = new MenuBar();
         menubar.getMenus().add(menu);
@@ -44,37 +46,41 @@ public class Main extends Application {
         Scene scene = new Scene(root, 450, 350);
 
 
-        save.setOnAction(event -> {
+        saveAs.setOnAction(event -> {
 
             PrintWriter pw = null;
-            try {
-                pw = new PrintWriter(new BufferedWriter(new FileWriter(fileChooser.showSaveDialog(null))));
+            File file=new File(String.valueOf(fileChooser.showSaveDialog(null)));
+                if(lox!=null) {
+                    try {
+                        pw = new PrintWriter(new BufferedWriter(new FileWriter(file)));
+
+                        lox = file.getAbsolutePath();
+                        String line;
+                        line = text.getText();
+                        line = line.replaceAll("\n", "\r\n");
+                        pw.println(line + "\n");
 
 
-                String line;
-                line = text.getText();
-                line = line.replaceAll("\n", "\r\n");
-                pw.println(line + "\n");
-
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                if (pw != null) pw.close();
-            }
-
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } finally {
+                        if (pw != null) pw.close();
+                    }
+                }
         });
 
         open.setOnAction(event -> {
 
             File file=new File(String.valueOf(fileChooser.showOpenDialog(null)));
-            text.setText("Loading ..."+"\r\n");
+            lox=file.getAbsolutePath();
+            if(text==null){
+                text.setText("Loading ..."+"\r\n");
+            }
             Thread t1 = new Thread(new Runnable() {
 
                 @Override
                 public void run() {
                     BufferedReader bf = null;
-                    boolean off = true;
                     try {
                         bf = new BufferedReader(new FileReader(file));
 
@@ -113,7 +119,36 @@ public class Main extends Application {
             System.exit(0);
 
         });
+        save.setOnAction(event -> {
+            if(lox!=null) {
+                BufferedWriter bw = null;
+                try {
+                    bw = new BufferedWriter(new FileWriter(lox));
 
+                    String line;
+                    line = text.getText();
+                    line = line.replaceAll("\n", "\r\n");
+                    bw.write(line + "\n");
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    if (bw != null) {
+                        try {
+                            bw.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+            else{
+                   File file=new File(String.valueOf(fileChooser.showSaveDialog(null)));
+                   lox=file.getAbsolutePath();
+
+
+            }
+        });
 
             about.setOnAction(event -> {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -126,7 +161,9 @@ public class Main extends Application {
 
 
             empty.setOnAction(event -> {
+
                 text.setText(null);
+                lox=null;
 
             });
 
