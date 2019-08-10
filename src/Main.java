@@ -49,8 +49,8 @@ public class Main extends Application {
         saveAs.setOnAction(event -> {
 
             PrintWriter pw = null;
-            File file=new File(String.valueOf(fileChooser.showSaveDialog(null)));
-                if(lox!=null) {
+            File file = fileChooser.showSaveDialog(null);
+                if(file!=null) {
                     try {
                         pw = new PrintWriter(new BufferedWriter(new FileWriter(file)));
 
@@ -71,11 +71,9 @@ public class Main extends Application {
 
         open.setOnAction(event -> {
 
-            File file=new File(String.valueOf(fileChooser.showOpenDialog(null)));
-            lox=file.getAbsolutePath();
-            if(text==null){
-                text.setText("Loading ..."+"\r\n");
-            }
+            File file = fileChooser.showOpenDialog(null);
+
+
             Thread t1 = new Thread(new Runnable() {
 
                 @Override
@@ -107,9 +105,13 @@ public class Main extends Application {
                 }
 
             });
+            if(file!=null){
+                text.setText("Loading ..."+"\r\n");
+                lox=file.getAbsolutePath();
+                t1.start();
+            }
 
 
-            t1.start();
 
 
 
@@ -143,8 +145,25 @@ public class Main extends Application {
                 }
             }
             else{
-                   File file=new File(String.valueOf(fileChooser.showSaveDialog(null)));
-                   lox=file.getAbsolutePath();
+                PrintWriter pw = null;
+                File file = fileChooser.showSaveDialog(null);
+                if(file!=null) {
+                    try {
+                        pw = new PrintWriter(new BufferedWriter(new FileWriter(file)));
+
+                        lox = file.getAbsolutePath();
+                        String line;
+                        line = text.getText();
+                        line = line.replaceAll("\n", "\r\n");
+                        pw.println(line + "\n");
+
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } finally {
+                        if (pw != null) pw.close();
+                    }
+                }
 
 
             }
